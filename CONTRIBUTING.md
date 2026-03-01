@@ -27,6 +27,21 @@ npm run typecheck
 npm test  # 66 unit tests across 5 suites
 ```
 
+### MCP Client Setup (VS Code Copilot)
+
+To test the MCP server with VS Code Copilot:
+
+```bash
+# Build the project (compiles TypeScript + copies spec files)
+npm run build
+
+# Copy and configure MCP settings
+cp .vscode/mcp.json.example .vscode/mcp.json
+# Edit .vscode/mcp.json with your FortiManager details
+```
+
+Open Agent mode in VS Code Copilot Chat — the `search` and `execute` tools will appear automatically.
+
 ### Running Locally
 
 ```bash
@@ -53,13 +68,13 @@ npm start
 
 ### Naming Conventions
 
-| Entity | Convention | Example |
-|--------|-----------|---------|
-| Files | `kebab-case.ts` | `fmg-client.ts` |
-| Classes | `PascalCase` | `FmgClient` |
-| Functions/variables | `camelCase` | `rawRequest` |
-| Constants | `SCREAMING_SNAKE_CASE` | `DEFAULT_EXECUTOR_OPTIONS` |
-| Types/interfaces | `PascalCase` | `ExecuteResult` |
+| Entity              | Convention             | Example                    |
+| ------------------- | ---------------------- | -------------------------- |
+| Files               | `kebab-case.ts`        | `fmg-client.ts`            |
+| Classes             | `PascalCase`           | `FmgClient`                |
+| Functions/variables | `camelCase`            | `rawRequest`               |
+| Constants           | `SCREAMING_SNAKE_CASE` | `DEFAULT_EXECUTOR_OPTIONS` |
+| Types/interfaces    | `PascalCase`           | `ExecuteResult`            |
 
 ### Error Handling
 
@@ -107,6 +122,30 @@ npm run test:coverage
 - Mock external HTTP calls — never hit real FortiManager in unit tests
 - Test files should import from the source using relative paths with `.js` extensions
 
+### Integration Tests
+
+The integration test suite (`scripts/live-test.ts`) validates both tools against a live FortiManager:
+
+```bash
+# Run integration tests (requires .env with FMG credentials)
+npx tsx scripts/live-test.ts
+
+# Include stress tests (200 sequential searches, 50 executes, heap check)
+npx tsx scripts/live-test.ts --stress
+```
+
+### API Coverage Report
+
+The spec coverage script (`scripts/spec-coverage.ts`) provides offline analysis and live URL validation:
+
+```bash
+# Offline spec analysis + cross-version comparison
+npx tsx scripts/spec-coverage.ts
+
+# Live URL validation against FortiManager (stratified sample)
+npx tsx scripts/spec-coverage.ts --validate --sample 100
+```
+
 ## Git Workflow
 
 ### Branch Naming
@@ -128,6 +167,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 **Scopes**: `client`, `spec`, `executor`, `server`, `docker`, `ci`, `docs`
 
 **Examples**:
+
 ```
 feat(client): add JSON-RPC request multiplexing
 fix(executor): increase QuickJS memory limit to 32MB
@@ -153,10 +193,11 @@ npm run generate:spec
 ```
 
 This parses the FortiManager HTML API reference docs and produces:
+
 - `src/spec/fmg-api-spec-7.4.json` (from 7.4.9 docs)
 - `src/spec/fmg-api-spec-7.6.json` (from 7.6.5 docs)
 
-> **Note**: Generated spec files are large (98-126 MB) and are committed to the repository. They are built offline and shipped with the Docker image.
+> **Note**: Generated spec files are large (98–126 MB) and tracked via Git LFS. They are built offline and shipped with the Docker image. The `npm run build` command automatically copies them to `dist/spec/`.
 
 ## Reporting Bugs
 

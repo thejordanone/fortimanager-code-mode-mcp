@@ -1,6 +1,6 @@
 # FortiManager Code Mode MCP Server
 
-> **Status**: Alpha — under active development. Not yet recommended for production use.
+> **Status**: Beta — validated against live FortiManager v7.6.6 with 152 tests. Under active development.
 
 [![CI](https://github.com/jmpijll/fortimanager-code-mode-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/jmpijll/fortimanager-code-mode-mcp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -11,10 +11,10 @@ Instead of wrapping each API endpoint as a separate tool (which consumes ~118K t
 
 ## Why Code Mode?
 
-| Approach | Tools | Context Tokens | API Coverage |
-|----------|-------|---------------|--------------|
-| Traditional MCP (1 tool per endpoint) | 590+ | ~118,000 | Full |
-| **Code Mode (this project)** | **2** | **~1,000** | **Full** |
+| Approach                              | Tools | Context Tokens | API Coverage |
+| ------------------------------------- | ----- | -------------- | ------------ |
+| Traditional MCP (1 tool per endpoint) | 590+  | ~118,000       | Full         |
+| **Code Mode (this project)**          | **2** | **~1,000**     | **Full**     |
 
 > **~99% reduction** in context tokens while maintaining full API coverage.
 
@@ -29,6 +29,7 @@ The Code Mode pattern was pioneered by [Cloudflare's MCP server](https://github.
 - **Dual transport** — Stdio (for Claude Desktop / local dev) and Streamable HTTP (for Docker / production)
 - **Docker-ready** — Multi-stage Alpine build with health checks
 - **Tested against live FortiManager** — 152 tests (66 unit + 86 integration) passing against FMG v7.6.6
+- **Security hardened** — HTTP timeout, response validation, sandbox method/params validation, log caps, code size limits
 
 ## Quick Start
 
@@ -59,6 +60,32 @@ docker compose up -d
 curl http://localhost:8000/health
 # → {"status":"ok","version":"0.1.0"}
 ```
+
+### VS Code Copilot (Recommended)
+
+Copy `.vscode/mcp.json.example` to `.vscode/mcp.json` and fill in your FortiManager details:
+
+```json
+{
+  "servers": {
+    "fortimanager": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["dist/index.js"],
+      "env": {
+        "FMG_HOST": "https://fortimanager.example.com",
+        "FMG_PORT": "443",
+        "FMG_API_TOKEN": "your-api-token-here",
+        "FMG_VERIFY_SSL": "true",
+        "FMG_API_VERSION": "7.6",
+        "MCP_TRANSPORT": "stdio"
+      }
+    }
+  }
+}
+```
+
+Open Agent mode in VS Code Copilot Chat and the `search` and `execute` tools will be available.
 
 ### Claude Desktop (stdio)
 
@@ -144,79 +171,86 @@ FMG_HOST=https://fmg.example.com FMG_API_TOKEN=your-token npm run dev
 
 ```javascript
 // Find all firewall-related objects
-specIndex.filter(o => o.name.includes('firewall')).map(o => ({
-  name: o.name,
-  urls: o.urls,
-  type: o.type
-}))
+specIndex
+  .filter((o) => o.name.includes('firewall'))
+  .map((o) => ({
+    name: o.name,
+    urls: o.urls,
+    type: o.type,
+  }));
 ```
 
 ```javascript
 // Get full details of a specific object (all attributes, URLs, methods)
-getObject('firewall/address')
+getObject('firewall/address');
 ```
 
 ```javascript
 // Search by attribute name
-specIndex.filter(o => o.attributeNames.includes('srcaddr')).map(o => o.name)
+specIndex.filter((o) => o.attributeNames.includes('srcaddr')).map((o) => o.name);
 ```
 
 ```javascript
 // Find objects by URL pattern
-specIndex.filter(o => o.urls.some(u => u.includes('/dvmdb/')))
-  .map(o => ({ name: o.name, urls: o.urls }))
+specIndex
+  .filter((o) => o.urls.some((u) => u.includes('/dvmdb/')))
+  .map((o) => ({ name: o.name, urls: o.urls }));
 ```
 
 ### `execute` — Call the FortiManager API
 
 ```javascript
 // List all ADOMs
-const resp = fortimanager.request('get', [{ url: '/dvmdb/adom' }]);
-resp.result[0].data
+const resp = await fortimanager.request('get', [{ url: '/dvmdb/adom' }]);
+resp.result[0].data;
 ```
 
 ```javascript
 // Get system status
-const resp = fortimanager.request('get', [{ url: '/sys/status' }]);
-resp.result[0].data
+const resp = await fortimanager.request('get', [{ url: '/sys/status' }]);
+resp.result[0].data;
 ```
 
 ```javascript
 // Create a firewall address object
-const resp = fortimanager.request('add', [{
-  url: '/pm/config/adom/root/obj/firewall/address',
-  data: {
-    name: 'web-server',
-    subnet: ['10.0.1.100', '255.255.255.255']
-  }
-}]);
-resp.result[0].status
+const resp = await fortimanager.request('add', [
+  {
+    url: '/pm/config/adom/root/obj/firewall/address',
+    data: {
+      name: 'web-server',
+      subnet: ['10.0.1.100', '255.255.255.255'],
+    },
+  },
+]);
+resp.result[0].status;
 ```
 
 ```javascript
 // Device proxy — get interfaces from a managed FortiGate
-const resp = fortimanager.request('exec', [{
-  url: '/sys/proxy/json',
-  data: {
-    target: ['/adom/root/device/my-fortigate'],
-    action: 'get',
-    resource: '/api/v2/monitor/system/interface'
-  }
-}]);
-resp.result[0].data
+const resp = await fortimanager.request('exec', [
+  {
+    url: '/sys/proxy/json',
+    data: {
+      target: ['/adom/root/device/my-fortigate'],
+      action: 'get',
+      resource: '/api/v2/monitor/system/interface',
+    },
+  },
+]);
+resp.result[0].data;
 ```
 
 ## Configuration
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `FMG_HOST` | Yes | — | FortiManager URL (e.g., `https://fmg.example.com`) |
-| `FMG_PORT` | No | `443` | HTTPS port |
-| `FMG_API_TOKEN` | Yes | — | API token for authentication ([how to create](https://docs.fortinet.com/document/fortimanager/7.6.0/administration-guide/924562)) |
-| `FMG_VERIFY_SSL` | No | `true` | Verify TLS certificates (`false` for self-signed certs) |
-| `FMG_API_VERSION` | No | `7.6` | API spec version (`7.4` or `7.6`) |
-| `MCP_TRANSPORT` | No | `stdio` | Transport mode (`http` or `stdio`) |
-| `MCP_HTTP_PORT` | No | `8000` | HTTP server port (only used with `http` transport) |
+| Variable          | Required | Default | Description                                                                                                                       |
+| ----------------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `FMG_HOST`        | Yes      | —       | FortiManager URL (e.g., `https://fmg.example.com`)                                                                                |
+| `FMG_PORT`        | No       | `443`   | HTTPS port                                                                                                                        |
+| `FMG_API_TOKEN`   | Yes      | —       | API token for authentication ([how to create](https://docs.fortinet.com/document/fortimanager/7.6.0/administration-guide/924562)) |
+| `FMG_VERIFY_SSL`  | No       | `true`  | Verify TLS certificates (`false` for self-signed certs)                                                                           |
+| `FMG_API_VERSION` | No       | `7.6`   | API spec version (`7.4` or `7.6`)                                                                                                 |
+| `MCP_TRANSPORT`   | No       | `stdio` | Transport mode (`http` or `stdio`)                                                                                                |
+| `MCP_HTTP_PORT`   | No       | `8000`  | HTTP server port (only used with `http` transport)                                                                                |
 
 ## Development
 
@@ -272,18 +306,27 @@ src/
 └── index.ts          # Entry point
 scripts/
 ├── generate-spec.ts  # HTML docs → JSON spec generator
-└── live-test.ts      # Integration test suite (21 tests against live FMG)
+├── live-test.ts      # Integration test suite (86 tests against live FMG)
+└── spec-coverage.ts  # API spec coverage report & live URL validation
 ```
 
 ## Security
 
 - **Sandboxed execution** — All agent-generated code runs in a QuickJS WASM sandbox with enforced memory (64 MB) and CPU (30s timeout) limits. No access to `process`, `require`, `fs`, or any Node.js APIs.
 - **No eval in host** — The host Node.js process never calls `eval()` or `new Function()`. Only the WASM sandbox executes untrusted code.
+- **HTTP request timeout** — 30-second timeout on all FortiManager API calls prevents indefinite hangs.
+- **Response shape validation** — JSON-RPC response bodies are validated before processing, preventing crashes from malformed responses.
+- **Sandbox method validation** — Only allowed FMG methods (`get`, `set`, `add`, `update`, `delete`, `exec`, `clone`, `move`, `replace`) are forwarded from sandbox code.
+- **Sandbox params validation** — Parameters from sandbox code are validated as arrays with required `url` fields before forwarding.
+- **Log accumulation cap** — Console output is capped at 1 MB / 1,000 entries to prevent host memory exhaustion.
+- **Code input size limit** — Code inputs exceeding 100 KB are rejected before execution.
 - **TLS verification** — Enabled by default (`FMG_VERIFY_SSL=true`). Disable only for development with self-signed certificates.
 - **Token-based auth** — Uses FortiManager API tokens via `Authorization: Bearer` header. No passwords stored.
 - **Fresh context per execution** — Each tool invocation gets a new sandbox context. No state leaks between executions.
 - **API call limits** — Max 50 API calls per sandbox execution to prevent runaway loops.
 - **Response truncation** — Results exceeding 100 KB are truncated with guidance on narrowing the query.
+- **Startup health check** — FortiManager connectivity is validated at boot (non-fatal).
+- **Graceful shutdown** — Both stdio and HTTP transports handle SIGINT/SIGTERM for clean shutdown.
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting.
 
