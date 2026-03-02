@@ -15,8 +15,8 @@ Create `.vscode/mcp.json` in your workspace:
   "servers": {
     "fortimanager": {
       "type": "stdio",
-      "command": "node",
-      "args": ["dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "fortimanager-code-mode-mcp"],
       "env": {
         "FMG_HOST": "https://your-fmg.example.com",
         "FMG_API_TOKEN": "your-api-token",
@@ -140,7 +140,7 @@ specIndex.filter(function(o) {
 ### Get System Status
 
 ```javascript
-var resp = fortimanager.request("exec", [{
+var resp = fortimanager.request("get", [{
   url: "/sys/status"
 }]);
 resp

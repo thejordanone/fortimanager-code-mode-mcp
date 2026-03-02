@@ -300,14 +300,17 @@ async function scenario6(search: SearchExecutor): Promise<void> {
     `);
     if (!s1.ok) throw new Error(`Search failed: ${s1.error}`);
     const modules = s1.data as { name: string; objects: number }[];
-    if (modules.length < 10) throw new Error(`Expected > 10 modules, got ${String(modules.length)}`);
+    if (modules.length < 10)
+      throw new Error(`Expected > 10 modules, got ${String(modules.length)}`);
 
     // Step 2: Top 5 modules should account for a meaningful portion of objects
     steps++;
     const totalObjects = modules.reduce((sum, m) => sum + m.objects, 0);
     const top5Objects = modules.slice(0, 5).reduce((sum, m) => sum + m.objects, 0);
     if (top5Objects / totalObjects < 0.15) {
-      throw new Error(`Top 5 modules only cover ${String(Math.round((top5Objects / totalObjects) * 100))}%`);
+      throw new Error(
+        `Top 5 modules only cover ${String(Math.round((top5Objects / totalObjects) * 100))}%`,
+      );
     }
 
     // Step 3: Verify total object count matches specIndex
@@ -391,7 +394,8 @@ async function scenario8(search: SearchExecutor, execute: CodeExecutor): Promise
     `);
     if (!s1.ok) throw new Error(`Search failed: ${s1.error}`);
     const dvmdbObjects = s1.data as string[];
-    if (dvmdbObjects.length < 5) throw new Error(`Expected > 5 dvmdb objects, got ${String(dvmdbObjects.length)}`);
+    if (dvmdbObjects.length < 5)
+      throw new Error(`Expected > 5 dvmdb objects, got ${String(dvmdbObjects.length)}`);
 
     // Step 2: Query /dvmdb/device to get real device data
     steps++;
@@ -550,7 +554,7 @@ async function main(): Promise<void> {
   // Load API spec
   const specPath = `src/spec/fmg-api-spec-${FMG_API_VERSION}.json`;
   console.log(`  Spec: ${specPath}`);
-  const spec: FmgApiSpec = JSON.parse(readFileSync(specPath, 'utf-8'));
+  const spec = JSON.parse(readFileSync(specPath, 'utf-8')) as FmgApiSpec;
 
   // Create client
   const client = new FmgClient({

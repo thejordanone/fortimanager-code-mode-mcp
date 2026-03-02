@@ -212,7 +212,7 @@ FMG_VERIFY_SSL=false
 
 ## Getting Help
 
-1. Check the [FortiManager JSON-RPC API Reference](docs/api-reference/) for endpoint details
+1. Check the [FortiManager JSON-RPC API Reference](https://docs.fortinet.com/document/fortimanager) for endpoint details
 2. Use the `search` tool to explore available URLs, attributes, and methods
 3. Look up error codes: `errorCodes.filter(function(e) { return e.code === <code>; })`
 4. File a [GitHub Issue](https://github.com/jmpijll/fortimanager-code-mode-mcp/issues) with:

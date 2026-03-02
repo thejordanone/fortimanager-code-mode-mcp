@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README updated with npm/npx installation instructions and `npx` examples for VS Code Copilot and Claude Desktop
 - Repository visibility changed to public
 
-## [0.2.0] — 2026-03-03
+## [0.2.0] — 2026-03-02
 
 ### Added
 

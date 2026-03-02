@@ -55,8 +55,8 @@ docs: add architecture diagram to README
 ## Versioning
 
 - Follow [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATCH`)
-- Pre-1.0: breaking changes increment MINOR, features/fixes increment PATCH
-- Release via git tags: `v0.1.0`, `v0.2.0`, etc.
+- Breaking changes increment MAJOR, features increment MINOR, fixes increment PATCH
+- Release via git tags: `v1.0.0`, `v1.1.0`, etc.
 
 ---
 
@@ -97,7 +97,10 @@ src/
 │   └── fixtures/
 └── index.ts        # Entry point
 scripts/
-└── generate-spec.ts  # HTML docs → JSON spec generator
+├── generate-spec.ts    # HTML docs → JSON spec generator
+├── e2e-test.ts         # End-to-end test suite (live FMG)
+├── generate-spec-74.ts # Spec generator for 7.4 docs
+└── generate-spec-76.ts # Spec generator for 7.6 docs
 ```
 
 ### Naming Conventions

@@ -1,11 +1,14 @@
 {
   // VS Code Copilot MCP server configuration
   // Copy this file to .vscode/mcp.json and fill in your FortiManager details
+  //
+  // Option A: Use npx (recommended — no local install required)
+  // Option B: Use local source (for development)
   "servers": {
     "fortimanager": {
       "type": "stdio",
-      "command": "node",
-      "args": ["dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "fortimanager-code-mode-mcp"],
       "env": {
         "FMG_HOST": "https://your-fortimanager.example.com",
         "FMG_PORT": "443",

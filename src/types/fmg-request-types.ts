@@ -11,22 +11,22 @@
  * @example
  * ```js
  * // List all ADOMs
- * const response = await fortimanager.request('get', [{ url: '/dvmdb/adom' }]);
+ * var response = fortimanager.request('get', [{ url: '/dvmdb/adom' }]);
  * response.result[0].data;
  *
  * // Get a specific firewall address
- * const response = await fortimanager.request('get', [{
+ * var response = fortimanager.request('get', [{
  *   url: '/pm/config/adom/root/obj/firewall/address/my-address'
  * }]);
  *
  * // Create a new address object
- * const response = await fortimanager.request('add', [{
+ * var response = fortimanager.request('add', [{
  *   url: '/pm/config/adom/root/obj/firewall/address',
  *   data: { name: 'test-addr', subnet: '10.0.0.0/24' }
  * }]);
  *
  * // Execute a device proxy call
- * const response = await fortimanager.request('exec', [{
+ * var response = fortimanager.request('exec', [{
  *   url: '/sys/proxy/json',
  *   data: {
  *     target: ['adom/root/device/my-fortigate'],

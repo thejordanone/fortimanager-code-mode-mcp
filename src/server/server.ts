@@ -77,7 +77,7 @@ Use \`var\` (not \`const\`) for variable declarations.
 ## Available Globals
 
 - \`fortimanager.request(method, params)\` — Send a JSON-RPC request to FortiManager
-  - \`method\`: \`"get" | "set" | "add" | "update" | "delete" | "exec" | "clone" | "move"\`
+  - \`method\`: \`"get" | "set" | "add" | "update" | "delete" | "exec" | "clone" | "move" | "replace"\`
   - \`params\`: Array of parameter objects, each with at least \`url\` field
   - Returns: \`{ id, result: [{ status: { code, message }, url, data? }] }\`
   - \`status.code\`: \`0\` = success, non-zero = error (e.g., \`-6\` = invalid URL, \`-11\` = no permission)

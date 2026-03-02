@@ -11,6 +11,9 @@ dist/
 # Memory bank (agent-local, not committed)
 .memory/
 
+# Fortinet API reference docs (copyrighted, not for distribution)
+docs/api-reference/
+
 # OS files
 .DS_Store
 Thumbs.db

@@ -181,30 +181,28 @@ FMG_HOST=https://fmg.example.com FMG_API_TOKEN=your-token npm run dev
 
 ```javascript
 // Find all firewall-related objects
-specIndex
-  .filter((o) => o.name.includes('firewall'))
-  .map((o) => ({
-    name: o.name,
-    urls: o.urls,
-    type: o.type,
-  }));
+specIndex.filter(function(o) {
+  return o.name.includes('firewall');
+}).map(function(o) {
+  return { name: o.name, urls: o.urls, type: o.type };
+})
 ```
 
 ```javascript
 // Get full details of a specific object (all attributes, URLs, methods)
-getObject('firewall/address');
+getObject('firewall/address')
 ```
 
 ```javascript
 // Search by attribute name
-specIndex.filter((o) => o.attributeNames.includes('srcaddr')).map((o) => o.name);
+specIndex.filter(function(o) { return o.attributeNames.includes('srcaddr'); }).map(function(o) { return o.name; })
 ```
 
 ```javascript
 // Find objects by URL pattern
-specIndex
-  .filter((o) => o.urls.some((u) => u.includes('/dvmdb/')))
-  .map((o) => ({ name: o.name, urls: o.urls }));
+specIndex.filter(function(o) {
+  return o.urls.some(function(u) { return u.includes('/dvmdb/'); });
+}).map(function(o) { return { name: o.name, urls: o.urls }; })
 ```
 
 ### `execute` — Call the FortiManager API
@@ -339,6 +337,13 @@ scripts/
 - **Graceful shutdown** — Both stdio and HTTP transports handle SIGINT/SIGTERM for clean shutdown.
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+
+## Documentation
+
+- [Usage Guide](docs/usage-guide.md) — tool examples, workflows, and best practices
+- [Architecture](docs/architecture.md) — system design and component overview
+- [Troubleshooting](docs/troubleshooting.md) — common issues and solutions
+- [Contributing](CONTRIBUTING.md) — development setup, testing, and PR process
 
 ## Acknowledgments
 

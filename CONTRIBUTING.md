@@ -134,6 +134,15 @@ npx tsx scripts/live-test.ts
 npx tsx scripts/live-test.ts --stress
 ```
 
+### End-to-End Tests
+
+The E2E test suite (`scripts/e2e-test.ts`) covers full CRUD scenarios against a live FortiManager:
+
+```bash
+# Run E2E tests (requires .env with FMG credentials)
+npx tsx scripts/e2e-test.ts
+```
+
 ### API Coverage Report
 
 The spec coverage script (`scripts/spec-coverage.ts`) provides offline analysis and live URL validation:
@@ -186,9 +195,13 @@ docs: add architecture diagram to README
 
 ## Regenerating API Specs
 
-If you update the HTML documentation files in `docs/api-reference/`, regenerate the JSON specs:
+The API spec JSON files are generated from FortiManager HTML API reference documentation. The HTML docs are **not included** in this repository (copyrighted by Fortinet). To regenerate specs, you need to obtain the HTML docs separately and place them in `docs/api-reference/`.
 
 ```bash
+# Place HTML docs in:
+# docs/api-reference/FortiManager-7.4.9-JSON-API-Reference/html/
+# docs/api-reference/FortiManager-7.6.5-JSON-API-Reference/html/
+
 npm run generate:spec
 ```
 

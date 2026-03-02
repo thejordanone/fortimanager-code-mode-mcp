@@ -190,9 +190,7 @@ export async function startHttpTransport(
         // MCP endpoint — handle POST, GET, DELETE for Streamable HTTP
         if (url === '/mcp') {
           stats.mcpRequests++;
-          logger.info(
-            `MCP ${req.method ?? 'UNKNOWN'} from ${clientIp}`,
-          );
+          logger.info(`MCP ${req.method ?? 'UNKNOWN'} from ${clientIp}`);
           await transport.handleRequest(req, res);
           const elapsed = Date.now() - startTime;
           logger.info(`MCP ${req.method ?? 'UNKNOWN'} completed in ${String(elapsed)}ms`);
