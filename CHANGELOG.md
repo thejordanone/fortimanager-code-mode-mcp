@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] — 2026-03-02
+
+### Added
+
+- **npm package** — installable via `npm install -g fortimanager-code-mode-mcp` or `npx fortimanager-code-mode-mcp`
+- **Binary entry point** — `fortimanager-mcp` CLI command via `bin` field in package.json
+
+### Changed
+
+- **Stable release** — promoted from Beta to v1.0.0 public release
+- README updated with npm/npx installation instructions and `npx` examples for VS Code Copilot and Claude Desktop
+- Repository visibility changed to public
+
 ## [0.2.0] — 2026-03-03
 
 ### Added
@@ -67,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Graceful shutdown** for both stdio and HTTP transports with signal deduplication
 - **Startup health check** validates FortiManager connectivity at boot
 
-[Unreleased]: https://github.com/jmpijll/fortimanager-code-mode-mcp/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/jmpijll/fortimanager-code-mode-mcp/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/jmpijll/fortimanager-code-mode-mcp/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/jmpijll/fortimanager-code-mode-mcp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/jmpijll/fortimanager-code-mode-mcp/releases/tag/v0.1.0

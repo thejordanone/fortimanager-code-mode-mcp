@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * FortiManager Code Mode MCP Server — Entry Point
  *

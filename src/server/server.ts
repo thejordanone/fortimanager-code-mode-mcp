@@ -159,7 +159,7 @@ export function createMcpServer(options: CreateServerOptions): McpServer {
   const server = new McpServer(
     {
       name: 'fortimanager-code-mode',
-      version: '0.2.0',
+      version: '1.0.0',
     },
     {
       capabilities: { tools: {} },

@@ -1,8 +1,9 @@
 # FortiManager Code Mode MCP Server
 
-> **Status**: Beta — validated against live FortiManager v7.6.6 with 152 tests. Under active development.
+> **Status**: Stable (v1.0.0) — validated against live FortiManager v7.6.6 with 152 tests.
 
 [![CI](https://github.com/jmpijll/fortimanager-code-mode-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/jmpijll/fortimanager-code-mode-mcp/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/fortimanager-code-mode-mcp)](https://www.npmjs.com/package/fortimanager-code-mode-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server for [Fortinet FortiManager](https://www.fortinet.com/products/management/fortimanager) that uses the **Code Mode** pattern — just 2 tools instead of 590+.
@@ -39,14 +40,24 @@ The Code Mode pattern was pioneered by [Cloudflare's MCP server](https://github.
 - **npm** 9+
 - A FortiManager instance with an [API token](https://docs.fortinet.com/document/fortimanager/7.6.0/administration-guide/924562)
 
-### Docker (Recommended)
+### npm (Recommended for stdio)
+
+```bash
+# Install globally
+npm install -g fortimanager-code-mode-mcp
+
+# Or run directly with npx
+npx fortimanager-code-mode-mcp
+```
+
+### Docker (Recommended for HTTP)
 
 ```bash
 # Clone the repository
 git clone https://github.com/jmpijll/fortimanager-code-mode-mcp.git
 cd fortimanager-code-mode-mcp
 
-# Install dependencies and generate API specs (tracked via Git LFS)
+# Install dependencies (spec JSONs tracked via Git LFS)
 npm install
 
 # Configure environment
@@ -58,7 +69,7 @@ docker compose up -d
 
 # Verify
 curl http://localhost:8000/health
-# → {"status":"ok","version":"0.2.0"}
+# → {"status":"ok","version":"1.0.0"}
 ```
 
 ### VS Code Copilot (Recommended)
@@ -70,8 +81,8 @@ Copy `.vscode/mcp.json.example` to `.vscode/mcp.json` and fill in your FortiMana
   "servers": {
     "fortimanager": {
       "type": "stdio",
-      "command": "node",
-      "args": ["dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "fortimanager-code-mode-mcp"],
       "env": {
         "FMG_HOST": "https://fortimanager.example.com",
         "FMG_PORT": "443",
@@ -85,7 +96,7 @@ Copy `.vscode/mcp.json.example` to `.vscode/mcp.json` and fill in your FortiMana
 }
 ```
 
-Open Agent mode in VS Code Copilot Chat and the `search` and `execute` tools will be available.
+Or if installed from source, use `"command": "node"` with `"args": ["dist/index.js"]`.
 
 ### Claude Desktop (stdio)
 
@@ -95,9 +106,8 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
 {
   "mcpServers": {
     "fortimanager": {
-      "command": "node",
-      "args": ["dist/index.js"],
-      "cwd": "/path/to/fortimanager-code-mode-mcp",
+      "command": "npx",
+      "args": ["-y", "fortimanager-code-mode-mcp"],
       "env": {
         "FMG_HOST": "https://fortimanager.example.com",
         "FMG_API_TOKEN": "your-api-token",
