@@ -145,11 +145,21 @@ const resp = await fortimanager.request("get", [{ url: "/sys/status" }]);
 
 ## Server Startup Issues
 
+### `API SPEC NOT FOUND`
+
+**Cause**: The API spec files have not been generated. They are **not included** in this repository and must be generated locally.
+
+**Solution**:
+1. Download the FortiManager JSON API Reference HTML docs from [FNDN](https://fndn.fortinet.net)
+2. Place them in `docs/api-reference/` (see [README](../README.md#important-api-spec-required) for exact folder structure)
+3. Run `npm run generate:spec`
+4. Run `npm run build`
+
 ### `ENOENT: no such file or directory, open '.../dist/spec/fmg-api-spec-7.6.json'`
 
-**Cause**: Spec files weren't copied to `dist/spec/` during build.
+**Cause**: Spec files weren't copied to `dist/spec/` during build, or haven't been generated yet.
 
-**Solution**: Run `npm run build` — the build script copies spec files automatically.
+**Solution**: Run `npm run generate:spec` first, then `npm run build` — the build script copies spec files automatically.
 
 ### `Error: Spec file not found or invalid`
 

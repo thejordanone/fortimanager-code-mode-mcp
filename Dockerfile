@@ -12,7 +12,8 @@ COPY tsconfig.json ./
 COPY src/ ./src/
 
 # Copy pre-generated spec files into source tree
-# (These are large — 98–126 MB each — and generated offline via `npm run generate:spec`)
+# IMPORTANT: You must run `npm run generate:spec` locally before building this image.
+# The spec files are NOT included in the repository — see README.md for setup instructions.
 COPY src/spec/*.json ./src/spec/
 
 RUN npm run build

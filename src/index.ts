@@ -58,8 +58,26 @@ async function loadSpec(version: string): Promise<FmgApiSpec> {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     throw new Error(
-      `Failed to load API spec for version ${version}: ${message}. ` +
-        `Ensure fmg-api-spec-${version}.json exists in the spec/ directory.`,
+      `\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `  API SPEC NOT FOUND\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `\n` +
+        `  Could not load: fmg-api-spec-${version}.json\n` +
+        `  Error: ${message}\n` +
+        `\n` +
+        `  The API spec files are NOT included in this package. You must generate\n` +
+        `  them from FortiManager's JSON API Reference HTML documentation.\n` +
+        `\n` +
+        `  Steps:\n` +
+        `    1. Download the FortiManager JSON API Reference from Fortinet FNDN:\n` +
+        `       https://fndn.fortinet.net  (requires Fortinet account)\n` +
+        `    2. Extract the HTML files into docs/api-reference/\n` +
+        `    3. Run: npm run generate:spec\n` +
+        `    4. Rebuild: npm run build\n` +
+        `\n` +
+        `  See README.md for detailed instructions.\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`,
     );
   }
 

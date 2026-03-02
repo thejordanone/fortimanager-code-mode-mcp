@@ -3,7 +3,6 @@
 > **Status**: Stable (v1.0.0) — validated against live FortiManager v7.6.6 with 152 tests.
 
 [![CI](https://github.com/jmpijll/fortimanager-code-mode-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/jmpijll/fortimanager-code-mode-mcp/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/fortimanager-code-mode-mcp)](https://www.npmjs.com/package/fortimanager-code-mode-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server for [Fortinet FortiManager](https://www.fortinet.com/products/management/fortimanager) that uses the **Code Mode** pattern — just 2 tools instead of 590+.
@@ -25,12 +24,63 @@ The Code Mode pattern was pioneered by [Cloudflare's MCP server](https://github.
 
 - **`search`** — Query the FortiManager API spec (URLs, objects, attributes, methods, error codes) via sandboxed JavaScript
 - **`execute`** — Run live FortiManager JSON-RPC API calls via sandboxed JavaScript with `fortimanager.request()` proxy
-- **Dual API version support** — Pre-built specs for FortiManager 7.4.9 and 7.6.5
+- **Dual API version support** — Spec generator supports FortiManager 7.4.x and 7.6.x
 - **QuickJS WASM sandbox** — Memory/CPU-limited code execution with no host access
 - **Dual transport** — Stdio (for Claude Desktop / local dev) and Streamable HTTP (for Docker / production)
 - **Docker-ready** — Multi-stage Alpine build with health checks
 - **Tested against live FortiManager** — 152 tests (66 unit + 86 integration) passing against FMG v7.6.6
 - **Security hardened** — HTTP timeout, response validation, sandbox method/params validation, log caps, code size limits
+
+## Important: API Spec Required
+
+> **This server will NOT work without generating the API spec files first.**
+
+The API spec files are derived from Fortinet's FortiManager JSON API Reference documentation, which is proprietary and cannot be redistributed. You must download the HTML docs yourself and generate the spec locally.
+
+### Step 1: Download the API Reference
+
+1. Go to the **Fortinet Developer Network (FNDN)**: [https://fndn.fortinet.net](https://fndn.fortinet.net)
+   - You need a Fortinet account (available to partners, customers, and NFR holders)
+2. Navigate to **FortiManager** → **JSON API Reference**
+3. Download the HTML reference archive for your FortiManager version (7.4.x or 7.6.x)
+
+### Step 2: Extract the HTML Files
+
+Extract the downloaded archive and place the HTML files in the `docs/api-reference/` directory:
+
+```
+docs/api-reference/
+├── FortiManager-7.4.9-JSON-API-Reference/
+│   └── html/
+│       ├── adomobj-errors.htm
+│       ├── adomobj-methods.htm
+│       └── ... (all .htm files)
+└── FortiManager-7.6.5-JSON-API-Reference/
+    └── html/
+        ├── adomobj-errors.htm
+        ├── adomobj-methods.htm
+        └── ... (all .htm files)
+```
+
+> You only need the version(s) you plan to use. The folder names must match the pattern above.
+
+### Step 3: Generate the Spec
+
+```bash
+npm run generate:spec
+```
+
+This parses the HTML docs and produces:
+- `src/spec/fmg-api-spec-7.4.json` (~99 MB)
+- `src/spec/fmg-api-spec-7.6.json` (~127 MB)
+
+### Step 4: Build
+
+```bash
+npm run build
+```
+
+The build step copies the generated spec files to `dist/spec/`. The server is now ready to use.
 
 ## Quick Start
 
@@ -39,50 +89,73 @@ The Code Mode pattern was pioneered by [Cloudflare's MCP server](https://github.
 - **Node.js** 20+ (LTS recommended)
 - **npm** 9+
 - A FortiManager instance with an [API token](https://docs.fortinet.com/document/fortimanager/7.6.0/administration-guide/924562)
+- **API spec files** generated from FortiManager HTML docs (see [API Spec Required](#important-api-spec-required) above)
 
-### npm (Recommended for stdio)
-
-```bash
-# Install globally
-npm install -g fortimanager-code-mode-mcp
-
-# Or run directly with npx
-npx fortimanager-code-mode-mcp
-```
-
-### Docker (Recommended for HTTP)
+### From Source (Recommended)
 
 ```bash
 # Clone the repository
 git clone https://github.com/jmpijll/fortimanager-code-mode-mcp.git
 cd fortimanager-code-mode-mcp
 
-# Install dependencies (spec JSONs tracked via Git LFS)
+# Install dependencies
 npm install
+
+# Generate API spec (requires HTML docs in docs/api-reference/ — see above)
+npm run generate:spec
+
+# Build
+npm run build
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your FortiManager details
+
+# Start (stdio mode)
+FMG_HOST=https://fmg.example.com FMG_API_TOKEN=your-token npm start
+
+# Or development mode with hot reload
+FMG_HOST=https://fmg.example.com FMG_API_TOKEN=your-token npm run dev
+```
+
+### Docker (Recommended for HTTP)
+
+> **Note**: You must generate the spec files before building the Docker image. The Dockerfile copies them from `src/spec/` at build time.
+
+```bash
+# Clone and install
+git clone https://github.com/jmpijll/fortimanager-code-mode-mcp.git
+cd fortimanager-code-mode-mcp
+npm install
+
+# Generate API spec (requires HTML docs — see above)
+npm run generate:spec
 
 # Configure environment
 cp .env.example .env
 # Edit .env with your FortiManager details
 
 # Run with Docker Compose
-docker compose up -d
+docker compose up -d --build
 
 # Verify
 curl http://localhost:8000/health
 # → {"status":"ok","version":"1.0.0"}
 ```
 
-### VS Code Copilot (Recommended)
+### VS Code Copilot
 
-Copy `.vscode/mcp.json.example` to `.vscode/mcp.json` and fill in your FortiManager details:
+> **Prerequisite**: You must have built the server from source with spec files generated first. Use `"command": "node"` with the path to your local build.
+
+Create `.vscode/mcp.json` in your workspace:
 
 ```json
 {
   "servers": {
     "fortimanager": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "fortimanager-code-mode-mcp"],
+      "command": "node",
+      "args": ["/path/to/fortimanager-code-mode-mcp/dist/index.js"],
       "env": {
         "FMG_HOST": "https://fortimanager.example.com",
         "FMG_PORT": "443",
@@ -96,9 +169,9 @@ Copy `.vscode/mcp.json.example` to `.vscode/mcp.json` and fill in your FortiMana
 }
 ```
 
-Or if installed from source, use `"command": "node"` with `"args": ["dist/index.js"]`.
-
 ### Claude Desktop (stdio)
+
+> **Prerequisite**: You must have built the server from source with spec files generated first.
 
 Add to your Claude Desktop configuration (`claude_desktop_config.json`):
 
@@ -106,8 +179,8 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
 {
   "mcpServers": {
     "fortimanager": {
-      "command": "npx",
-      "args": ["-y", "fortimanager-code-mode-mcp"],
+      "command": "node",
+      "args": ["/path/to/fortimanager-code-mode-mcp/dist/index.js"],
       "env": {
         "FMG_HOST": "https://fortimanager.example.com",
         "FMG_API_TOKEN": "your-api-token",
@@ -117,22 +190,6 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
     }
   }
 }
-```
-
-### From Source
-
-```bash
-# Install dependencies
-npm install
-
-# Build
-npm run build
-
-# Start (stdio mode)
-FMG_HOST=https://fmg.example.com FMG_API_TOKEN=your-token npm start
-
-# Or development mode with hot reload
-FMG_HOST=https://fmg.example.com FMG_API_TOKEN=your-token npm run dev
 ```
 
 ## Architecture

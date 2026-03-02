@@ -14,6 +14,9 @@ dist/
 # Fortinet API reference docs (copyrighted, not for distribution)
 docs/api-reference/
 
+# Generated API spec files (derived from copyrighted docs, must be generated locally)
+src/spec/*.json
+
 # OS files
 .DS_Store
 Thumbs.db

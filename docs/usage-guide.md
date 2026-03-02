@@ -4,19 +4,32 @@ This guide shows how to use the FortiManager Code Mode MCP Server with AI agents
 
 ---
 
+## Prerequisites
+
+Before using this server, you **must generate the API spec files** from Fortinet's FortiManager JSON API Reference documentation. The spec files are not included in this repository.
+
+1. **Download the HTML docs** from the [Fortinet Developer Network (FNDN)](https://fndn.fortinet.net) — requires a Fortinet account
+2. **Extract** the HTML files into `docs/api-reference/` (see [README.md](../README.md#important-api-spec-required) for exact folder structure)
+3. **Generate the spec**: `npm run generate:spec`
+4. **Build**: `npm run build`
+
+> **The server will not start without the spec files.** If you see an "API SPEC NOT FOUND" error, you haven't completed this step.
+
+---
+
 ## Quick Start
 
 ### 1. Configure VS Code Copilot (Recommended)
 
-Create `.vscode/mcp.json` in your workspace:
+Create `.vscode/mcp.json` in your workspace (assumes you built the server locally):
 
 ```json
 {
   "servers": {
     "fortimanager": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "fortimanager-code-mode-mcp"],
+      "command": "node",
+      "args": ["/path/to/fortimanager-code-mode-mcp/dist/index.js"],
       "env": {
         "FMG_HOST": "https://your-fmg.example.com",
         "FMG_API_TOKEN": "your-api-token",
@@ -30,11 +43,15 @@ Create `.vscode/mcp.json` in your workspace:
 
 ### 2. Configure Docker (HTTP Transport)
 
+> **Note**: You must generate the spec files first — `npm run generate:spec` — before building the Docker image.
+
 ```yaml
 # docker-compose.yml
 services:
   fmg-mcp:
-    image: ghcr.io/jmpijll/fortimanager-code-mode-mcp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     environment:

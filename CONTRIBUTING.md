@@ -32,7 +32,8 @@ npm test  # 66 unit tests across 5 suites
 To test the MCP server with VS Code Copilot:
 
 ```bash
-# Build the project (compiles TypeScript + copies spec files)
+# Build the project (compiles TypeScript + copies spec files to dist/)
+# Note: spec files must be generated first — see "Generating API Specs" below
 npm run build
 
 # Copy and configure MCP settings
@@ -193,24 +194,44 @@ docs: add architecture diagram to README
 5. **Describe your changes** using the PR template
 6. **Squash merge** once approved
 
-## Regenerating API Specs
+## Generating API Specs (Required)
 
-The API spec JSON files are generated from FortiManager HTML API reference documentation. The HTML docs are **not included** in this repository (copyrighted by Fortinet). To regenerate specs, you need to obtain the HTML docs separately and place them in `docs/api-reference/`.
+The API spec JSON files are generated from FortiManager HTML API reference documentation. The HTML docs and generated spec files are **not included** in this repository — they contain Fortinet proprietary content that cannot be redistributed.
+
+> **You must generate the spec files before the server will work.** Without them, the server will exit with an "API SPEC NOT FOUND" error.
+
+### How to Get the HTML Docs
+
+1. Go to the **Fortinet Developer Network (FNDN)**: [https://fndn.fortinet.net](https://fndn.fortinet.net)
+   - Requires a Fortinet account (available to partners, customers, and NFR holders)
+2. Navigate to **FortiManager** → **JSON API Reference**
+3. Download the HTML reference archive for your version (7.4.x or 7.6.x)
+4. Extract the HTML files into the following structure:
+
+```
+docs/api-reference/
+├── FortiManager-7.4.9-JSON-API-Reference/
+│   └── html/
+│       ├── adomobj-errors.htm
+│       └── ... (all .htm files)
+└── FortiManager-7.6.5-JSON-API-Reference/
+    └── html/
+        ├── adomobj-errors.htm
+        └── ... (all .htm files)
+```
+
+### Generate the Spec
 
 ```bash
-# Place HTML docs in:
-# docs/api-reference/FortiManager-7.4.9-JSON-API-Reference/html/
-# docs/api-reference/FortiManager-7.6.5-JSON-API-Reference/html/
-
 npm run generate:spec
 ```
 
-This parses the FortiManager HTML API reference docs and produces:
+This parses the HTML docs and produces:
 
-- `src/spec/fmg-api-spec-7.4.json` (from 7.4.9 docs)
-- `src/spec/fmg-api-spec-7.6.json` (from 7.6.5 docs)
+- `src/spec/fmg-api-spec-7.4.json` (~99 MB, from 7.4.9 docs)
+- `src/spec/fmg-api-spec-7.6.json` (~127 MB, from 7.6.5 docs)
 
-> **Note**: Generated spec files are large (98–126 MB) and tracked via Git LFS. They are built offline and shipped with the Docker image. The `npm run build` command automatically copies them to `dist/spec/`.
+The generated specs and HTML docs are git-ignored. After generating, run `npm run build` to copy specs into `dist/spec/`.
 
 ## Reporting Bugs
 

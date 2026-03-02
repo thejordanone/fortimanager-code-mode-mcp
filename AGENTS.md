@@ -79,9 +79,9 @@ src/
 │   ├── types.ts
 │   ├── auth.ts
 │   └── fmg-client.ts
-├── spec/           # Generated API spec JSON files
-│   ├── fmg-api-spec-7.4.json
-│   └── fmg-api-spec-7.6.json
+├── spec/           # Generated API spec JSON files (git-ignored, generated locally)
+│   ├── fmg-api-spec-7.4.json  # Generated from FNDN HTML docs
+│   └── fmg-api-spec-7.6.json  # Generated from FNDN HTML docs
 ├── executor/       # QuickJS sandbox executors
 │   ├── types.ts
 │   ├── executor.ts
